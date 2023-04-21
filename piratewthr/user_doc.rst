@@ -1,12 +1,20 @@
 
 .. index:: Plugins; piratewthr (pirateweather.net / forecast.io Wetterdaten)
-.. index:: darksky
+.. index:: piratewthr
+.. index:: pirateweather.net
 .. index:: Wetter; piratewthr
 .. index:: struct; piratewthr
 
 ==========
 piratewthr
 ==========
+
+.. image:: webif/static/img/plugin_logo.png
+   :alt: plugin logo
+   :width: 300px
+   :height: 300px
+   :scale: 50 %
+   :align: left
 
 Wetterdaten von `pirateweather.net <https://pirateweather.net>`_ lesen.
 
@@ -15,18 +23,12 @@ Pirate Weather stellt ein DarkSky kompatibles API zur Verfügung, um Wetterdaten
 darksky.net wurde am 31. März 2020 von Apple gekauft. Als Folge davon werden keine weiteren API Schlüssel vergeben
 und das API ist auch nur noch bis Ende März 2023 zugänglich.
 
+|
 
 Konfiguration
 =============
 
-Die Informationen zur Konfiguration des Plugins sind unter :doc:`/plugins_doc/config/pirateweather` beschrieben.
-
-
-Web Interface
-=============
-
-Das piratewthr Plugin verfügt über ein Webinterface, mit dessen Hilfe die Items die das Plugin nutzen
-übersichtlich dargestellt werden.
+Die Informationen zur Konfiguration des Plugins sind unter :doc:`/plugins_doc/config/piratewthr` beschrieben.
 
 
 Item Konfiguration
@@ -99,6 +101,14 @@ werden soll:
    wetter_bos:
        struct: piratewthr.weather
        instance: bos
+
+|
+
+Web Interface
+=============
+
+Das piratewthr Plugin verfügt über ein Webinterface, mit dessen Hilfe die Items die das Plugin nutzen
+übersichtlich dargestellt werden.
 
 
 Aufruf des Webinterfaces

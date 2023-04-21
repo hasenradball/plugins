@@ -7,22 +7,17 @@
 <script>
   $(document).ready( function () {
     $(window).trigger('datatables_defaults');
-    try {
       {% if webif_pagelength is defined %}webif_pagelength = {{ webif_pagelength|int }};{% endif %}
+      console.log('pagelength ' + webif_pagelength);
       if (isNaN(parseFloat(webif_pagelength)) || webif_pagelength == 0) {
         resize = true;
         webif_pagelength = -1;
-        console.log('Activating automatic table resize');
+        console.log('Activating automatic table resize ' + webif_pagelength);
       }
       else {
         resize = false;
       }
-    }
-    catch (e) {
-      webif_pagelength = 100;
-      resize = false;
-      console.log("Using default values for page length " + webif_pagelength + ", pageResize: " + resize);
-    }
+
 		try {
       itemtable = $('#itemtable').DataTable( {
         pageResize: resize,
@@ -40,7 +35,7 @@
         { className: "no-sort actions", targets: -1 }
         ].concat($.fn.dataTable.defaults.columnDefs),
         pageLength: webif_pagelength});
-
+      {%  if p.count_logentries %}
       orphantable = $('#orphantable').DataTable( {
         pageResize: resize,
         columnDefs: [
@@ -53,6 +48,19 @@
         { className: "logcount", targets: 5, render: $.fn.dataTable.render.number('.', ',', 0, '') },
         ].concat($.fn.dataTable.defaults.columnDefs),
         pageLength: webif_pagelength});
+      {% else %}
+      orphantable = $('#orphantable').DataTable( {
+        pageResize: resize,
+        columnDefs: [
+        { responsivePriority: 1, targets: 1 },
+        { responsivePriority: 2, targets: 2 },
+        { className: "item", targets: 1 },
+        { className: "time", targets: 2 },
+        { className: "type", targets: 3 },
+        { className: "id", targets: 4, render: $.fn.dataTable.render.number('.', ',', 0, '')  },
+        ].concat($.fn.dataTable.defaults.columnDefs),
+        pageLength: webif_pagelength});
+      {% endif %}
 
       detailtable = $('#item_details_table').DataTable( {
         pageLength: webif_pagelength,

@@ -1,5 +1,5 @@
-
 .. index:: Plugins; network
+.. index:: network
 
 =======
 network
@@ -14,7 +14,7 @@ network
 
 
 Konfiguration
--------------
+=============
 
 Im folgenden ist die alte Dokumentation zu lesen. Die aktuelle Dokumentation zur Konfiguration ist
 unter :doc:`/plugins_doc/config/influxdb2` nachzulesen.
@@ -28,8 +28,7 @@ plugin.yaml
 .. code:: yaml
 
    nw:
-       class_name: Network
-       class_path: plugins.network
+       plugin_name: network
        # ip: 0.0.0.0
        # port: 2727
        tcp: yes
@@ -41,7 +40,7 @@ plugin.yaml
        http: 12345
 
 Attribute
-~~~~~~~~~
+=========
 
 -  ``ip``: gibt eine hörende IP Addresse an. Standardmäßig werden Daten von allen IP Adressen akzeptiert.
 
@@ -176,7 +175,7 @@ Im Kontext einer Logik hat das dictionary *trigger* folgenden Einträge:
 
 
 Benutzung
----------
+=========
 
 Es wird folgendes generisches Paketformat erwartet: ``key|id|value``
 Aktuell werden drei Schlüsselworte unterstützt:
@@ -201,7 +200,7 @@ Aktuell werden drei Schlüsselworte unterstützt:
    $ wget "http://XX.XX.XX.XX:8090/item|network.incoming|123"
 
 Funktionen
-----------
+==========
 
 udp(host, port, data)
 ~~~~~~~~~~~~~~~~~~~~~

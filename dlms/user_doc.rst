@@ -5,6 +5,13 @@
 dlms
 ====
 
+.. image:: webif/static/img/plugin_logo.png
+   :alt: plugin logo
+   :width: 300px
+   :height: 300px
+   :scale: 50 %
+   :align: left
+
 Das Plugin dient zum Auslesen von Smartmetern die das DLMS Protokoll beherrschen.
 
 Anforderungen
@@ -71,8 +78,7 @@ Beispiele für die plugin.yaml
 .. code:: yaml
 
    dlms:
-       class_name: DLMS
-       class_path: plugins.dlms
+       plugin_name: dlms
        serialport: /dev/dlms0
        update_cycle: 900
 

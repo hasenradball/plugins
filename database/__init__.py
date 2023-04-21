@@ -25,6 +25,7 @@
 
 import copy
 import re
+import os
 import datetime
 import functools
 import time
@@ -108,7 +109,6 @@ class Database(SmartPlugin):
         self._copy_database = self.get_parameter_value('copy_database')
         self._copy_database_name = self.get_parameter_value('copy_database_name')
 
-        self.webif_pagelength = self.get_parameter_value('webif_pagelength')
         self._webdata = {}
 
         self._replace = {table: table if self._prefix == "" else self._prefix + table for table in ["log", "item"]}
@@ -1514,7 +1514,7 @@ class Database(SmartPlugin):
                 self._maxage_worklist = [i for i in self._items_with_maxage]
             else:
                 self._maxage_worklist = [i for i in self._handled_items]
-            self.logger.info(f"remove_older_: Worklist filled with {len(self._items_with_maxage)} items")
+            self.logger.info(f"remove_older_: Worklist filled with {len(self._maxage_worklist)} items")
 
         item = self._maxage_worklist.pop(0)
         itempath = item.property.path
@@ -1657,11 +1657,14 @@ class Database(SmartPlugin):
                     {i: [self._prepare(query[0]), self._prepare(query[1])] for i, query in self._setup.items()})
                 self._db_initialized = True
         except Exception as e:
-            self.logger.critical("Database: Initialization failed: {}".format(e))
             if self.driver.lower() == 'sqlite3':
+                self.logger.critical(f"Database: Initialization failed: {e}")
+                self.logger.error(f" - connection string={self._connect}")
+                self.logger.error(f" - working directory={os.getcwd()}")
                 self._sh.restart('SmartHomeNG (Database plugin stalled)')
                 exit(0)
             else:
+                self.logger.critical(f"Database: Initialization failed: {e}")
                 return False
 
         # initialize db maintenance connection

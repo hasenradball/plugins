@@ -37,7 +37,7 @@ from .webif import WebInterface
 class PirateWeather(SmartPlugin):
 
 
-    PLUGIN_VERSION = "1.0.1"
+    PLUGIN_VERSION = "1.1.1"
 
     # https://api.pirateweather.net/forecast/[apikey]/[latitude],[longitude]
     _base_url = 'https://api.pirateweather.net/forecast/'
@@ -73,7 +73,7 @@ class PirateWeather(SmartPlugin):
         self._jsonData = {}
         self._session = requests.Session()
         self._cycle = int(self.get_parameter_value('cycle'))
-        self._items = {}
+        self._items = {}        # Items that are handled by this plugin
 
         self.init_webinterface(WebInterface)
 
@@ -99,7 +99,7 @@ class PirateWeather(SmartPlugin):
 
     def _update(self):
         """
-        Updates information on diverse items
+        Updates information on items when it becomes available on the weather service
         """
         forecast = self.get_forecast()
         if forecast is None:
@@ -230,7 +230,7 @@ class PirateWeather(SmartPlugin):
             hour.update({'date': date_entry, 'weekday': day_entry, 'hour': hour_entry, 'icon_visu': self.map_icon(hour['icon'])})
             if json_obj['daily'].get(date_key) is None:
                 json_obj['daily'].update({date_key: {}})
-            elif json_obj['daily'][date_key].get('hours') is None:
+            if json_obj['daily'][date_key].get('hours') is None:
                 json_obj['daily'][date_key].update({'hours': {}})
             json_obj['daily'][date_key]['hours'].update(OrderedDict({hour_entry: hour}))
             json_obj['hourly'].update(OrderedDict({'hour{}'.format(number): hour}))
@@ -301,10 +301,16 @@ class PirateWeather(SmartPlugin):
 
         :param item: The item to process.
         """
-        if self.get_iattr_value(item.conf, 'pw_matchstring'):
-            if not self.get_iattr_value(item.conf, 'pw_matchstring') in self._items:
-                self._items[self.get_iattr_value(item.conf, 'pw_matchstring')] = []
-            self._items[self.get_iattr_value(item.conf, 'pw_matchstring')].append(item)
+        pw_matchstring = self.get_iattr_value(item.conf, 'pw_matchstring')
+        if pw_matchstring:
+            if not pw_matchstring in self._items:
+                self._items[pw_matchstring] = []
+            self._items[pw_matchstring].append(item)
+
+            self.add_item(item, mapping=pw_matchstring, config_data_dict={})
+
+        return
+
 
     def get_items(self):
         return self._items

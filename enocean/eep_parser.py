@@ -275,7 +275,7 @@ class EEP_Parser():
         if not (payload[3] == 0x0F):
             self.logger.error("EEP A5_30_03 not according to spec.")
             return results
-        # Data_byte2 = Temperatur 0..40°C (255..0)
+        # Data_byte2 = Temperatur 0...40 Â°C (255...0)
         results['TEMP']  = 40 - (payload[1]/255*40) 
         # Data_byte1 = 0x0F = Alarm, 0x1F = kein Alarm
         results['ALARM'] = (payload[2]  == 0x0F)
@@ -426,14 +426,16 @@ class EEP_Parser():
         return results 
 
     def _parse_eep_F6_10_00(self, payload, status):
-        self.logger.debug("Processing F6_10_00: Mechanical Handle")
+        self.logger.debug(f"Processing F6_10_00: Mechanical Handle sends payload {payload[0]}")
         results = {}
-        if (payload[0] == 0xF0):
+        # Eltako defines 0xF0 for closed status. Enocean spec defines masking of lower 4 bit:
+        if (payload[0] & 0b11110000) == 0b11110000:
             results['STATUS'] = 0
-        elif ((payload[0]) == 0xE0) or ((payload[0]) == 0xC0):
+        # Eltako defines 0xE0 for window open (horizontal) up status. Enocean spec defines the following masking:
+        elif (payload[0] & 0b11010000) == 0b11000000:
             results['STATUS'] = 1
-        # Typo error in older Eltako Datasheet for 0x0D instead of the right 0xD0
-        elif (payload[0] == 0xD0):
+        # Eltako defines 0xD0 for open/right up status. Enocean spec defines masking of lower 4 bit:
+        elif (payload[0] & 0b11110000) == 0b11010000:
             results['STATUS'] = 2
         else:
             self.logger.error(f"Error in F6_10_00 handle status, payload: {payload[0]} unknown")
@@ -450,6 +452,8 @@ class EEP_Parser():
             B: status of the shutter actor (command) 
         '''
         self.logger.debug("Processing F6_0G_03: shutter actor")
+        self.logger.debug("payload = [{}]".format(', '.join(['0x%02X' % b for b in payload])))
+        self.logger.debug("status: {}".format(status))
         results = {}
         if (payload[0] == 0x70):
             results['POSITION'] = 0
@@ -458,9 +462,10 @@ class EEP_Parser():
             results['POSITION'] = 255
             results['B'] = 0
         elif (payload[0] == 0x01):
-            results['STATUS'] = 'Start movin up'
+            results['STATUS'] = 'Start moving up'
             results['B'] = 1
         elif (payload[0] == 0x02):
-            results['STATUS'] = 'Start movin down'
+            results['STATUS'] = 'Start moving down'
             results['B'] = 2
+        self.logger.debug('parse_eep_F6_0G_03 returns: {}'.format(results))
         return results
